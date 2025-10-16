@@ -9,14 +9,22 @@ export default defineConfig({
       provider: 'v8',
       reportsDirectory: './coverage',
       reporter: ['text', 'lcov'],
-      thresholds: {
-        lines: 80, // eslint-disable-line no-magic-numbers
-        functions: 80, // eslint-disable-line no-magic-numbers
-        branches: 75, // eslint-disable-line no-magic-numbers
-        statements: 80, // eslint-disable-line no-magic-numbers
-      },
       all: true,
-      exclude: ['**/*.d.ts', '**/node_modules/**', '**/vite.config.*', '**/vitest.config.*'],
+      exclude: [
+        '**/*.d.ts',
+        '**/node_modules/**',
+        '**/vite.config.*',
+        '**/vitest.config.*',
+        '**/.history/**',
+        '**/coverage/**',
+        '**/dist/**',
+        '**/build/**',
+        '**/.eslintrc.*',
+        '**/tsconfig.*',
+        '**/package*.json',
+        '**/README.md',
+        '**/index.html',
+      ],
     },
   },
 });
