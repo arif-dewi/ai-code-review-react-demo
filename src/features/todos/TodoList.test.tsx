@@ -98,7 +98,7 @@ describe('TodoList', () => {
     expect(screen.getByText(COMPLETED_TODO)).toBeInTheDocument();
 
     // Test active filter
-    const activeButton = screen.getByRole('button', { name: /active/i });
+    const activeButton = screen.getByRole('button', { name: 'Active' });
     activeButton.click();
 
     await waitFor(() => {
@@ -123,7 +123,7 @@ describe('TodoList', () => {
     });
 
     // Filter to active todos (should be empty)
-    const activeButton = screen.getByRole('button', { name: /active/i });
+    const activeButton = screen.getByRole('button', { name: 'Active' });
     activeButton.click();
 
     await waitFor(() => {
