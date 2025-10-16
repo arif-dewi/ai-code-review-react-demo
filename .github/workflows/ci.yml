@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests with coverage
+        run: npm run test:coverage
+
+      # Detect if code changed without tests
+      - name: Detect changed paths
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            src:
+              - 'src/**/*.{ts,tsx,js,jsx}'
+            tests:
+              - '**/*.{test,spec}.{ts,tsx,js,jsx}'
+              - 'tests/**'
+
+      - name: Enforce tests when src changes
+        if: steps.changes.outputs.src == 'true' && steps.changes.outputs.tests != 'true'
+        run: |
+          echo "❌ src/** changed but no tests were modified. Please add/update tests."
+          exit 1
+
+      # Safety net: block .only / .skip in repo
+      - name: Block focused/disabled tests
+        run: |
+          if grep -R -nE '\.only\(|\.skip\(' --include='*.{ts,tsx,js,jsx}' . ; then
+            echo "❌ Found .only/.skip in tests"; exit 1;
+          fi
