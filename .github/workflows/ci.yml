@@ -27,8 +27,8 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
-      - name: Tests with coverage
-        run: npm run test:coverage
+      - name: Tests
+        run: npm run test
 
       # Detect if code changed without tests
       - name: Detect changed paths

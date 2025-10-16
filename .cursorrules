@@ -1,0 +1,260 @@
+# Cursor Bugbot Code Review Rules
+
+## Primary Focus: Catch What Developers Miss
+
+### 1. TEST COVERAGE ANALYSIS (TOP PRIORITY)
+
+**ALWAYS check for missing tests - this is a critical blind spot:**
+
+#### New Files Without Tests
+- Scan for new `.ts`, `.tsx`, `.js`, `.jsx` files in `src/`
+- For EVERY new file, check if corresponding test file exists:
+  - `src/foo/Bar.ts` → `src/foo/Bar.test.ts` MUST exist
+  - `src/hooks/useData.ts` → `src/hooks/useData.test.ts` MUST exist
+  - `src/services/Api.ts` → `src/services/Api.test.ts` MUST exist
+
+#### Test Coverage Thresholds
+- **CRITICAL**: Business logic files >50 lines WITHOUT tests
+- **HIGH**: Exported functions/classes WITHOUT test coverage
+- **MEDIUM**: Utility functions >20 lines WITHOUT tests
+
+#### What Needs Tests
+1. **Services/Business Logic** (ALWAYS require tests)
+   - API clients
+   - Data transformation logic
+   - Validation functions
+   - Calculation/algorithm functions
+
+2. **Custom Hooks** (ALWAYS require tests)
+   - State management hooks
+   - Data fetching hooks
+   - Complex effect hooks
+
+3. **Components** (Test if complex)
+   - Components with conditional rendering
+   - Components with user interactions
+   - Components with side effects
+
+4. **Utilities** (Test if non-trivial)
+   - String/array manipulation
+   - Date/time formatting
+   - Validation/parsing logic
+
+#### Example Detection Pattern
+```typescript
+// FILE: src/features/todos/TodoService.ts
+// SIZE: 138 lines
+// EXPORTS: 7 methods (validateTodo, calculatePriority, etc.)
+// TEST FILE: ❌ NOT FOUND
+// 
+// 🔴 CRITICAL: Missing test coverage for business logic service
+//
+// This file contains complex logic that MUST be tested:
+// - validateTodo(): Multiple validation rules
+// - calculatePriority(): Score calculation algorithm
+// - filterTodos(): Business logic filtering
+// - sortByPriority(): Sort stability concerns
+//
+// REQUIRED ACTION: Create TodoService.test.ts with comprehensive tests
+```
+
+### 2. Security Vulnerabilities (HIGH PRIORITY)
+
+#### XSS/Injection Risks
+- `dangerouslySetInnerHTML` without sanitization → **CRITICAL**
+- User input in URLs without encoding → **HIGH**
+- Dynamic HTML/script generation → **HIGH**
+- Unescaped user content in templates → **MEDIUM**
+
+#### Data Security
+- Sensitive data in localStorage without encryption → **HIGH**
+- API keys in frontend code → **CRITICAL**
+- Unvalidated API responses → **MEDIUM**
+
+### 3. React-Specific Issues (HIGH PRIORITY)
+
+#### Performance Anti-patterns
+- Inline objects/functions in props (causes re-renders) → **HIGH**
+- Missing memoization for expensive calculations → **MEDIUM**
+- Expensive operations in render body → **HIGH**
+
+#### React Hooks Issues
+- Missing dependencies in useEffect/useCallback/useMemo → **HIGH**
+- Stale closures from empty dependency arrays → **HIGH**
+- Unnecessary effects that should be derived state → **MEDIUM**
+
+#### React Best Practices
+- Array index as key in `.map()` → **HIGH**
+- Mutating state directly → **CRITICAL**
+- Missing key prop in lists → **HIGH**
+
+### 4. Accessibility Issues (HIGH PRIORITY)
+
+#### Interactive Elements
+- `<div>` with onClick instead of `<button>` → **HIGH**
+- Missing ARIA labels on interactive elements → **HIGH**
+- No keyboard navigation (Enter/Space) → **HIGH**
+- Missing focus management in modals/dialogs → **MEDIUM**
+
+#### Semantic HTML
+- Non-semantic elements for structure → **MEDIUM**
+- Missing alt text on images → **HIGH**
+- Incorrect heading hierarchy → **LOW**
+
+### 5. Code Quality (MEDIUM PRIORITY)
+
+#### Maintainability
+- Magic numbers without explanation → **MEDIUM**
+- Hardcoded strings (use constants/enums) → **MEDIUM**
+- Deeply nested logic (>3 levels) → **LOW**
+- Functions >50 lines → **LOW**
+
+#### Error Handling
+- Unhandled promise rejections → **HIGH**
+- Missing try/catch in async functions → **MEDIUM**
+- Silent failures (empty catch blocks) → **MEDIUM**
+
+## Review Report Format
+
+For each PR, generate a report with:
+
+### 1. Test Coverage Analysis
+```
+📊 TEST COVERAGE REPORT
+
+New Files: 3
+Files with Tests: 1 (33%)
+Files without Tests: 2 (67%) ⚠️
+
+Missing Test Files:
+❌ src/features/todos/TodoService.ts (138 lines, 7 exports)
+   - Complex business logic requiring comprehensive tests
+   - Risk: Untested validation and calculation logic
+
+❌ src/hooks/useCustomHook.ts (45 lines)
+   - Custom hook without test coverage
+   - Risk: State management bugs
+
+✅ src/components/Button.tsx
+   - Has tests: Button.test.tsx
+```
+
+### 2. Security Issues
+```
+🔒 SECURITY ANALYSIS
+
+Critical Issues: 1
+High Issues: 0
+
+🔴 CRITICAL: XSS Vulnerability
+File: src/components/TodoItem.tsx
+Line: 42
+Issue: dangerouslySetInnerHTML without sanitization
+Impact: Allows arbitrary script execution
+Fix: Use DOMPurify.sanitize(html)
+```
+
+### 3. Performance Issues
+```
+⚡ PERFORMANCE ANALYSIS
+
+High Impact: 2
+Medium Impact: 1
+
+🔴 HIGH: Inline object causes re-renders
+File: src/pages/HomePage.tsx
+Line: 8-12
+Fix: Move outside component or use useMemo
+
+🔴 HIGH: Missing useCallback
+File: src/pages/HomePage.tsx  
+Line: 15-17
+Fix: Wrap with useCallback([])
+```
+
+### 4. Accessibility Issues
+```
+♿ ACCESSIBILITY ANALYSIS
+
+Blockers: 1
+Issues: 2
+
+🔴 BLOCKER: Non-semantic interactive element
+File: src/components/TodoItem.tsx
+Line: 48-54
+Issue: <div onClick> instead of <button>
+Impact: Not keyboard accessible
+Fix: Use <button> with proper ARIA
+```
+
+### 5. Summary
+```
+Overall Risk Assessment: HIGH ⚠️
+
+Priority Fixes Required:
+1. Add test coverage for TodoService.ts (CRITICAL)
+2. Fix XSS vulnerability with sanitization (CRITICAL)
+3. Fix accessibility blocker (HIGH)
+4. Add memoization to prevent re-renders (HIGH)
+
+Bugs Detected: 7
+- Critical: 2
+- High: 3
+- Medium: 2
+- Low: 0
+```
+
+## Detection Priority Order
+
+1. **Missing test coverage** (Check first, always flag)
+2. **Security vulnerabilities** (XSS, injection, data exposure)
+3. **Accessibility blockers** (Keyboard nav, ARIA, semantic HTML)
+4. **Performance issues** (Re-renders, missing memoization)
+5. **React anti-patterns** (Keys, hooks, state management)
+6. **Code quality** (Magic numbers, error handling)
+
+## Important Notes
+
+- **TEST COVERAGE IS #1 PRIORITY**: Flag any new business logic without tests
+- **Be specific**: Include file names, line numbers, exact issues
+- **Provide fixes**: Don't just identify problems, suggest solutions
+- **Use severity levels**: Help developers prioritize fixes
+- **Check test file content**: Test file existing != good coverage
+- **Explain impact**: Help developers understand why it matters
+
+## Automated Checks
+
+When reviewing, scan for these patterns:
+
+```bash
+# Find files without tests
+- New .ts/.tsx files in src/ without .test.ts/.test.tsx
+- Exports without corresponding test imports
+- Class definitions without test suites
+
+# Find security issues  
+- dangerouslySetInnerHTML without DOMPurify
+- innerHTML assignments
+- eval() usage
+- localStorage with sensitive data keys
+
+# Find performance issues
+- Object literals in JSX props
+- Arrow functions in JSX props  
+- useEffect with missing deps (check ESLint warnings)
+
+# Find accessibility issues
+- div/span with onClick
+- Missing aria-label on inputs
+- img without alt attribute
+```
+
+## Goal
+
+**Catch the bugs that developers and traditional linters miss:**
+- Missing test coverage (critical blind spot)
+- Security vulnerabilities (XSS, injection)
+- Accessibility violations (keyboard, ARIA)
+- React-specific performance issues
+- Business logic errors
+
