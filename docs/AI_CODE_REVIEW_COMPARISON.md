@@ -136,16 +136,20 @@ This document analyzes the effectiveness of two AI-powered code review tools—*
 
 ## Overall Performance Comparison
 
-### Detection Rates
+### Detection Rates (All PRs)
 
-| Tool | Total Bugs | Detected | Missed | Detection Rate |
-|------|------------|----------|--------|----------------|
-| **GitHub Copilot** | 9 | 9 | 0 | **100%** |
-| **Cursor Bugbot** | 9 | 4 | 5 | **44%** |
+| Tool | Total Issues | Detected | Missed | Detection Rate |
+|------|-------------|----------|--------|----------------|
+| **GitHub Copilot** | 10 | 9 | 1 | **90%** |
+| **Cursor Bugbot** | 10 | 4 | 6 | **40%** |
+
+**Breakdown:**
+- **Bugs (PRs #1-3)**: Copilot 9/9 (100%), Bugbot 4/9 (44%)
+- **Test Coverage (PR #4)**: Copilot 0/1 (0%), Bugbot 0/1 (quota exceeded)
 
 **Note:** Cursor Bugbot's performance was limited by free tier restrictions, allowing only 2 full PR reviews before hitting quota limits.
 
-### Bug Categories Detected
+### Issue Categories Detected
 
 | Category | GitHub Copilot | Cursor Bugbot |
 |----------|----------------|---------------|
@@ -153,16 +157,16 @@ This document analyzes the effectiveness of two AI-powered code review tools—*
 | **Performance (React)** | ✅ | ✅ (PR #2 only) |
 | **React Best Practices (Keys)** | ✅ | ✅ |
 | **Accessibility** | ✅ | ✅ |
-| **Test Coverage** | ❌ | ❌ |
+| **Test Coverage (Missing Files)** | ❌ | ❌ |
 | **Code Quality (Magic Numbers)** | ✅ | ❌ |
 | **React Hooks (Dependencies)** | ✅ | ✅ |
 
 ### Detection by PR
 
-| Tool | PR #1 | PR #2 | PR #3 | Total |
-|------|-------|-------|-------|-------|
-| **GitHub Copilot** | 3/3 (100%) | 3/3 (100%) | 3/3 (100%) | 9/9 (100%) |
-| **Cursor Bugbot** | 1/3 (33%) | 3/3 (100%) | 0/3 (quota) | 4/9 (44%) |
+| Tool | PR #1 | PR #2 | PR #3 | PR #4 | Total |
+|------|-------|-------|-------|-------|-------|
+| **GitHub Copilot** | 3/3 (100%) | 3/3 (100%) | 3/3 (100%) | 0/1 (0%) | 9/10 (90%) |
+| **Cursor Bugbot** | 1/3 (33%) | 3/3 (100%) | 0/3 (quota) | 0/1 (quota) | 4/10 (40%) |
 
 ## Key Findings
 
