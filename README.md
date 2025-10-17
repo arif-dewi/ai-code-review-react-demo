@@ -197,6 +197,92 @@ This project serves as a demonstration of AI-assisted code review practices:
 4. **Clean Architecture**: Feature-based organization with clear separation of concerns
 5. **Type Safety**: Full TypeScript coverage with strict configuration
 
+### 🤖 AI Code Review Configuration
+
+This repository includes custom instructions to enhance AI code review tools' effectiveness:
+
+#### GitHub Copilot Configuration
+- **Location**: `.github/copilot-instructions.md`
+- **Purpose**: Instructs Copilot to check for test coverage gaps, security issues, and React patterns
+- **Key Focus Areas**:
+  - ⚠️ **Test Coverage Analysis** (Critical blind spot)
+  - 🔒 Security vulnerabilities (XSS, injection)
+  - ⚡ Performance issues (memoization, hooks dependencies)
+  - ♿ Accessibility violations
+  - 📋 Code quality (magic numbers, hardcoded strings)
+
+#### Cursor Bugbot Configuration
+- **Location**: `.cursorrules`
+- **Purpose**: Defines review priorities and detection patterns for Cursor's AI reviewer
+- **Key Focus Areas**:
+  - 📊 **Missing test files** (Top priority)
+  - 🔴 Critical security issues
+  - 🎯 React-specific anti-patterns
+  - ♿ Accessibility blockers
+  - 📈 Performance optimizations
+
+#### Why These Rules Matter
+
+**Test Coverage Blind Spot**: During initial testing, both AI tools achieved high detection rates (44-100%) but **missed 130+ lines of untested business logic**. The custom rules now explicitly instruct AI reviewers to:
+
+1. Check if new files have corresponding test files
+2. Flag business logic without test coverage
+3. Verify test file existence and quality
+4. Report test coverage status in every review
+
+**Example Improvements**:
+```typescript
+// ❌ Before custom rules: AI missed this
+// src/services/TodoService.ts (138 lines, no tests)
+
+// ✅ After custom rules: AI flags immediately
+// 🔴 CRITICAL: Missing test coverage for TodoService.ts
+//    - 7 exported methods without tests
+//    - Complex business logic requires comprehensive testing
+//    - Create TodoService.test.ts with unit tests
+```
+
+#### Using AI Review with Custom Rules
+
+1. **For GitHub Copilot**:
+   - Custom instructions are automatically loaded from `.github/copilot-instructions.md`
+   - Request a review with `@copilot review` in PR comments
+   - Copilot will now check for test coverage and flag missing tests
+
+2. **For Cursor Bugbot**:
+   - Rules are loaded from `.cursorrules` in the repository root
+   - Request a review with `@cursor review` in PR comments
+   - Bugbot will prioritize test coverage analysis first
+
+3. **Verify AI Reviews**:
+   - Check that reviews include "Test Coverage Analysis" section
+   - Look for explicit mention of test file presence/absence
+   - Verify security, performance, and accessibility checks
+
+#### Example AI Review Output (With Custom Rules)
+
+```markdown
+## Test Coverage Analysis ⚠️
+
+New Files: 1
+Files with Tests: 0/1 (0%) ❌
+
+Missing Tests:
+- src/features/todos/TodoService.ts (138 lines)
+  * 7 exported methods without coverage
+  * CRITICAL: Business logic requires testing
+
+Recommendation: Create TodoService.test.ts
+
+## Security Analysis ✅
+No critical issues found
+
+## Performance Analysis ⚠️  
+2 issues found (inline objects, missing memoization)
+```
+
+See [AI_CODE_REVIEW_COMPARISON.md](./docs/AI_CODE_REVIEW_COMPARISON.md) for detailed analysis of AI review effectiveness with and without custom rules.
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
