@@ -107,6 +107,7 @@ export const TodoAnalytics = {
     const abandoned = this.findAbandonedTodos(todos);
 
     // Weight different factors
+
     score += completionRate * COMPLETION_WEIGHT;
     score += Math.min(avgLength / AVG_LENGTH_DIVISOR, AVG_LENGTH_MAX_SCORE) * AVG_LENGTH_WEIGHT;
     score -= abandoned.length * ABANDONED_TODO_PENALTY;
