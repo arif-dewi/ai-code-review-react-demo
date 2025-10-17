@@ -187,6 +187,82 @@ npm run preview
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request
 
+## 🎯 Demo Purpose
+
+This project demonstrates the **value of AI-powered code review** by showcasing realistic PRs with intentional bugs that AI reviewers excel at catching. The main branch contains clean, production-ready code, while demo branches introduce common issues that developers might miss but AI can identify.
+
+### 🔍 Demo Pull Requests
+
+The repository includes several demo PRs, each containing 2-3 intentional bugs that highlight AI reviewer capabilities:
+
+#### PR #1: Feature - Todo Filtering and Status Management
+**Branch:** `feature/todo-filtering`
+
+Adds filtering capabilities with status-based sorting. Contains:
+- **Missing dependencies** in `useEffect` hooks (stale closure bugs)
+- **Hardcoded string literals** for status comparisons (no enums/constants)
+- **Magic numbers** for filter limits
+
+**What AI Should Catch:**
+- Exhaustive deps warnings with explanation of closure issues
+- Suggestion to create `TodoStatus` enum or constants
+- Extract magic numbers to named constants
+
+#### PR #2: Feature - Enhanced Todo Display with Rich Content
+**Branch:** `feature/rich-todo-display`
+
+Adds rich text display for todos. Contains:
+- **XSS vulnerability** using `dangerouslySetInnerHTML` without sanitization
+- **Unstable array keys** using index instead of stable IDs
+- **Accessibility violations** replacing semantic buttons with divs
+
+**What AI Should Catch:**
+- Security risk explanation and DOMPurify suggestion
+- React reconciliation issues with index keys
+- A11y violations with keyboard navigation concerns
+
+#### PR #3: Feature - Todo Business Logic Service
+**Branch:** `feature/todo-service`
+
+Adds complex business logic service. Contains:
+- **Missing test coverage** for new service file
+- **Performance issues** with inline object/function props
+
+**What AI Should Catch:**
+- Lack of tests for new business logic
+- Performance anti-patterns and `useMemo`/`useCallback` suggestions
+- Coverage drop warnings
+
+### 📋 How to Review Demo PRs
+
+1. **Checkout a demo branch:**
+   ```bash
+   git checkout feature/todo-filtering
+   ```
+
+2. **Run the app locally:**
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+3. **Run quality checks:**
+   ```bash
+   npm run lint
+   npm run typecheck
+   npm run test:coverage
+   ```
+
+4. **Review the code changes:**
+   - Compare against main branch
+   - Look for the intentional bugs listed above
+   - See what your AI reviewer catches
+
+5. **Expected behavior:**
+   - Some bugs will be caught by ESLint/TypeScript
+   - Some bugs will pass linting but break functionality
+   - AI reviewers should identify all issues with context
+
 ## 📝 Code Review Guidelines
 
 This project serves as a demonstration of AI-assisted code review practices:

@@ -12,6 +12,8 @@ const TodoList: React.FC = () => {
   const deleteTodoMutation = useDeleteTodo();
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
   const [newTodoTitle, setNewTodoTitle] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [filteredData, setFilteredData] = useState<Todo[]>([]);
   const typewriterSoundPool = useRef<HTMLAudioElement[]>([]);
   const bellSoundPool = useRef<HTMLAudioElement[]>([]);
   const currentTypewriterIndex = useRef(0);
@@ -52,12 +54,33 @@ const TodoList: React.FC = () => {
     }
   }, [isLoading, error]);
 
+  // BUG: Missing dependencies - statusFilter and todos should be in deps array
+  // This causes stale closure issues
+  useEffect(() => {
+    let filtered = todos;
+    
+    // BUG: Hardcoded string literals instead of using enum/constants
+    if (statusFilter === "PRIMARY") {
+      filtered = filtered.filter((todo: Todo) => todo.status === "PRIMARY");
+    } else if (statusFilter === "SECONDARY") {
+      filtered = filtered.filter((todo: Todo) => todo.status === "SECONDARY");
+    }
+    
+    // BUG: Magic number - should be extracted to constant
+    if (filtered.length > 50) {
+      filtered = filtered.slice(0, 50);
+    }
+    
+    setFilteredData(filtered);
+  }, []); // Missing: statusFilter, todos
+
   // Memoize filtered todos to prevent unnecessary recalculations
   const filteredTodos = useMemo(() => {
-    if (filter === 'all') return todos;
-    if (filter === 'active') return todos.filter((todo: Todo) => !todo.completed);
-    return todos.filter((todo: Todo) => todo.completed);
-  }, [todos, filter]);
+    let result = filteredData.length > 0 ? filteredData : todos;
+    if (filter === 'all') return result;
+    if (filter === 'active') return result.filter((todo: Todo) => !todo.completed);
+    return result.filter((todo: Todo) => todo.completed);
+  }, [todos, filter, filteredData]);
 
   const handleToggle = (id: number) => {
     const todo = todos.find((t: Todo) => t.id === id);
@@ -186,6 +209,30 @@ const TodoList: React.FC = () => {
           aria-pressed={filter === 'completed'}
         >
           Completed
+        </button>
+      </div>
+
+      <div className="status-filters">
+        <button
+          type="button"
+          onClick={() => setStatusFilter('all')}
+          className={statusFilter === 'all' ? 'active' : ''}
+        >
+          All Status
+        </button>
+        <button
+          type="button"
+          onClick={() => setStatusFilter('PRIMARY')}
+          className={statusFilter === 'PRIMARY' ? 'active' : ''}
+        >
+          Primary
+        </button>
+        <button
+          type="button"
+          onClick={() => setStatusFilter('SECONDARY')}
+          className={statusFilter === 'SECONDARY' ? 'active' : ''}
+        >
+          Secondary
         </button>
       </div>
 
