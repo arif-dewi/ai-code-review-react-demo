@@ -3,6 +3,7 @@ export interface Todo {
   title: string;
   completed: boolean;
   userId: number;
+  status?: string; // Status field for filtering
 }
 
 export interface CreateTodoRequest {
