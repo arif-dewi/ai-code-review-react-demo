@@ -1,5 +1,29 @@
 # GitHub Copilot Code Review Instructions
 
+## 🚨 START EVERY REVIEW WITH THIS:
+
+```markdown
+## Test Coverage Analysis
+
+New files added: [list them]
+Files with tests: X/Y
+Files without tests: [list them with ❌]
+
+[If any files lack tests, mark as CRITICAL and explain why tests are needed]
+```
+
+## ⚠️ MANDATORY: Test Coverage Check
+
+**FIRST PRIORITY - Check BEFORE reviewing code quality:**
+
+For EVERY PR, you MUST:
+1. List all new `.ts`, `.tsx`, `.js`, `.jsx` files added in `src/`
+2. Check if each file has a corresponding `.test.ts` or `.test.tsx` file
+3. Report missing test files in a "Test Coverage Analysis" section at the TOP of your review
+4. Mark missing tests as CRITICAL severity
+5. Files >50 lines without tests = CRITICAL
+6. Services, hooks, utilities without tests = HIGH severity
+
 ## Code Review Focus Areas
 
 ### 1. Test Coverage Analysis (CRITICAL)
