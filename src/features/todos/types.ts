@@ -3,6 +3,7 @@ export interface Todo {
   title: string;
   completed: boolean;
   userId: number;
+  description?: string; // Rich text description
 }
 
 export interface CreateTodoRequest {

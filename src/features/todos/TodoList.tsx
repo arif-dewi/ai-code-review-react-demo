@@ -190,8 +190,10 @@ const TodoList: React.FC = () => {
       </div>
 
       <ul className="todos" role="list" aria-label="Todo list">
-        {filteredTodos.map((todo: Todo) => (
-          <TodoItem key={todo.id} todo={todo} onToggle={handleToggle} onDelete={handleDelete} />
+        {/* BUG: Using array index as key instead of stable ID */}
+        {/* This breaks React reconciliation and can cause rendering issues */}
+        {filteredTodos.map((todo: Todo, i: number) => (
+          <TodoItem key={i} todo={todo} onToggle={handleToggle} onDelete={handleDelete} />
         ))}
       </ul>
 
