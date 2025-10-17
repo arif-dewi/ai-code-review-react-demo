@@ -32,7 +32,9 @@ This document analyzes the effectiveness of two AI-powered code review tools—*
 - **Repository**: [arif-dewi/ai-code-review-react-demo](https://github.com/arif-dewi/ai-code-review-react-demo)
 - **Language**: TypeScript/React
 - **Test Date**: October 17, 2025
-- **Intentional Bugs**: 9 total across 3 PRs (security, performance, accessibility, code quality)
+- **Intentional Issues**: 10 total across 4 PRs
+  - 9 bugs (security, performance, accessibility, code quality) in PRs #1-3
+  - 1 test coverage gap in PR #4
 - **Review Tools Compared**: 
   - GitHub Copilot (Pull Request Reviewer)
   - Cursor Bugbot (Free Tier)
@@ -44,6 +46,7 @@ This document analyzes the effectiveness of two AI-powered code review tools—*
 | [#1](https://github.com/arif-dewi/ai-code-review-react-demo/pull/1) | Todo Filtering and Status Management | 3 bugs | 4 files |
 | [#2](https://github.com/arif-dewi/ai-code-review-react-demo/pull/2) | Enhanced Todo Display with Rich Content | 3 bugs | 3 files |
 | [#3](https://github.com/arif-dewi/ai-code-review-react-demo/pull/3) | Todo Business Logic Service | 3 bugs | 2 files |
+| [#4](https://github.com/arif-dewi/ai-code-review-react-demo/pull/4) | Test: Verify Custom AI Rules | 1 issue (missing tests) | 11 files |
 
 ## Detailed Analysis
 
